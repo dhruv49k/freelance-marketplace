@@ -6,6 +6,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import com.freelance.backend.security.JWTAuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -20,14 +22,26 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
+                .formLogin(form -> form.disable())      // <-- ADD THIS
+                .httpBasic(basic -> basic.disable())    // <-- ADD THIS
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/users/register",
                                 "/api/auth/login"
                         ).permitAll()
                         .anyRequest().authenticated()
+                )
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
                 );
 
         return http.build();
+    }
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
+    public SecurityConfig(JWTAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 }

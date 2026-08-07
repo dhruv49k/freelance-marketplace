@@ -7,10 +7,12 @@ import javax.crypto.SecretKey;
 import com.freelance.backend.entity.User;
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
+import io.jsonwebtoken.Claims;
+
 
 @Service
 public class JWTService {
-    private final SecretKey secretKey = Keys.secretKeyFor(io.jsonwebtoken.SignatureAlgorithm.HS256);
+    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String generateToken(User user) {
 
@@ -21,6 +23,23 @@ public class JWTService {
                 .signWith(secretKey)
                 .compact();
 
+    }
+
+    public String extractEmail(String token) {
+
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
+
+    }
+
+    public boolean isTokenValid(String token, User user) {
+        String email = extractEmail(token);
+        return email.equals(user.getEmail());
     }
 
 }
