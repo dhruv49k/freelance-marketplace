@@ -1,31 +1,16 @@
-package com.freelance.backend.entity;
-
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+package com.freelance.backend.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "freelancer_profiles")
-public class FreelancerProfile {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class FreelancerProfileResponse {
+
     private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
     private String title;
-
-    @Column(length = 1000)
     private String bio;
     private String skills;
     private Integer experience;
     private BigDecimal hourlyRate;
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     public Long getId() {
@@ -34,14 +19,6 @@ public class FreelancerProfile {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public String getTitle() {
@@ -91,4 +68,5 @@ public class FreelancerProfile {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
 }
