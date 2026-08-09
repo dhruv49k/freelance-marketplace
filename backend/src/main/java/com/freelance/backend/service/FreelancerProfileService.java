@@ -29,11 +29,8 @@ public class FreelancerProfileService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName();
+        User user = (User) authentication.getPrincipal();
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found"));
         if (user.getRole() != Role.FREELANCER) {
             throw new RuntimeException(
                     "Only freelancers can create a freelancer profile");
@@ -74,11 +71,7 @@ public class FreelancerProfileService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+        User user = (User) authentication.getPrincipal();
 
         FreelancerProfile profile =
                 freelancerProfileRepository.findByUserId(user.getId())
@@ -106,11 +99,7 @@ public class FreelancerProfileService {
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
 
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found"));
+        User user = (User) authentication.getPrincipal();
 
         FreelancerProfile profile =
                 freelancerProfileRepository.findByUserId(user.getId())
