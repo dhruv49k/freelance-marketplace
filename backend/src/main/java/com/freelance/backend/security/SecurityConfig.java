@@ -1,5 +1,6 @@
 package com.freelance.backend.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,15 +24,29 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
 
-                .formLogin(form -> form.disable())      // <-- ADD THIS
-                .httpBasic(basic -> basic.disable())    // <-- ADD THIS
-
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/users/register",
-                                "/api/auth/login"
+                                "/api/auth/**",
+                                "/api/users/register"
                         ).permitAll()
                         .anyRequest().authenticated()
+                )
+
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"message\":\"Authentication required\"}"
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json");
+                            response.getWriter().write(
+                                    "{\"message\":\"You are not authorized to access this resource\"}"
+                            );
+                        })
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

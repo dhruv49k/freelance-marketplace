@@ -5,6 +5,8 @@ import com.freelance.backend.dto.ProjectResponse;
 import com.freelance.backend.entity.ProjectStatus;
 import com.freelance.backend.entity.User;
 import com.freelance.backend.entity.Project;
+import com.freelance.backend.exception.ProjectNotFoundException;
+import com.freelance.backend.exception.UnauthorizedProjectAccessException;
 import com.freelance.backend.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -48,7 +50,8 @@ public class ProjectService {
     public ProjectResponse getProjectById(Long projectId) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() ->
+                        new ProjectNotFoundException("Project not found"));
 
         return mapToResponse(project);
     }
@@ -66,7 +69,7 @@ public class ProjectService {
     private void validateOwnership(Project project, User client) {
 
         if (!project.getClient().getId().equals(client.getId())) {
-            throw new RuntimeException(
+            throw new UnauthorizedProjectAccessException(
                     "You are not authorized to modify this project"
             );
         }
@@ -79,7 +82,8 @@ public class ProjectService {
     ) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() ->
+                        new ProjectNotFoundException("Project not found"));
 
         validateOwnership(project, client);
 
@@ -95,7 +99,8 @@ public class ProjectService {
     public void deleteProject(Long projectId, User client) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() ->
+                        new ProjectNotFoundException("Project not found"));
 
         validateOwnership(project, client);
 
