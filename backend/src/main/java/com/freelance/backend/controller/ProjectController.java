@@ -3,7 +3,6 @@ package com.freelance.backend.controller;
 import com.freelance.backend.dto.ProjectRequest;
 import com.freelance.backend.dto.ProjectResponse;
 import com.freelance.backend.entity.User;
-import com.freelance.backend.repository.UserRepository;
 import com.freelance.backend.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
-    public ProjectController(ProjectService projectService, UserRepository userRepository) {
+    public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
     }
 
