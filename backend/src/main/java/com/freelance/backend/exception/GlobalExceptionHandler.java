@@ -46,4 +46,10 @@ public class GlobalExceptionHandler {
 
         return errors;
     }
+
+    @ExceptionHandler(DuplicateProposalException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public String handleDuplicateProposal(DuplicateProposalException ex) {
+        return ex.getMessage();
+    }
 }
