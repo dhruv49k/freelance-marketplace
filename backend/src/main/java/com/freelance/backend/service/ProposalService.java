@@ -5,6 +5,7 @@ import com.freelance.backend.exception.DuplicateProposalException;
 import com.freelance.backend.exception.ProjectNotFoundException;
 import com.freelance.backend.dto.ProposalRequest;
 import com.freelance.backend.dto.ProposalResponse;
+import com.freelance.backend.exception.UnauthorizedProposalAccessException;
 import com.freelance.backend.repository.ProposalRepository;
 import com.freelance.backend.repository.ProjectRepository;
 import com.freelance.backend.repository.UserRepository;
@@ -94,6 +95,33 @@ public class ProposalService {
 
         List<Proposal> proposals =
                 proposalRepository.findByProjectId(projectId);
+
+        return proposals.stream()
+                .map(proposal -> {
+                    ProposalResponse response = new ProposalResponse();
+
+                    response.setId(proposal.getId());
+                    response.setProjectId(proposal.getProject().getId());
+                    response.setFreelancerId(proposal.getFreelancer().getId());
+                    response.setBidAmount(proposal.getBidAmount());
+                    response.setCoverLetter(proposal.getCoverLetter());
+                    response.setStatus(proposal.getStatus());
+                    response.setCreatedAt(proposal.getCreatedAt());
+
+                    return response;
+                })
+                .toList();
+    }
+
+    public List<ProposalResponse> getMyProposals(User freelancer) {
+
+        if (freelancer.getRole() != Role.FREELANCER) {
+            throw new UnauthorizedProposalAccessException(
+                    "Only freelancers can access their proposals"
+            );
+        }
+        List<Proposal> proposals =
+                proposalRepository.findByFreelancerId(freelancer.getId());
 
         return proposals.stream()
                 .map(proposal -> {

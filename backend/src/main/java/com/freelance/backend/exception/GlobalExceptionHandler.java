@@ -31,6 +31,13 @@ public class GlobalExceptionHandler {
         return ex.getMessage();
     }
 
+    @ExceptionHandler(UnauthorizedProposalAccessException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public String handleUnauthorizedProposalAccess(
+            UnauthorizedProposalAccessException ex) {
+        return ex.getMessage();
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidationErrors(
