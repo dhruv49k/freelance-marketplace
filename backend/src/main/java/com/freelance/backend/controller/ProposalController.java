@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/projects")
 public class ProposalController {
@@ -42,5 +44,24 @@ public class ProposalController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(response);
+    }
+
+    @GetMapping("/{projectId}/proposals")
+    public ResponseEntity<List<ProposalResponse>> getProposalsForProject(
+            @PathVariable Long projectId
+    ) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        User client = (User) authentication.getPrincipal();
+
+        List<ProposalResponse> proposals =
+                proposalService.getProposalsForProject(
+                        projectId,
+                        client
+                );
+
+        return ResponseEntity.ok(proposals);
     }
 }
