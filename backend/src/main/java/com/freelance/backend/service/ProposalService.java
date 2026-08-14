@@ -35,10 +35,17 @@ public class ProposalService {
             ProposalRequest request,
             User freelancer
     ) {
+        if (freelancer.getRole() != Role.FREELANCER) {
+            throw new UnauthorizedProposalAccessException(
+                    "Only freelancers can submit proposals"
+            );
+        }
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() ->
                         new ProjectNotFoundException("Project not found"));
+
+
 
         if (project.getStatus() != ProjectStatus.OPEN) {
             throw new IllegalStateException(
@@ -82,6 +89,11 @@ public class ProposalService {
             Long projectId,
             User client
     ) {
+        if (client.getRole() != Role.CLIENT) {
+            throw new UnauthorizedProposalAccessException(
+                    "Only clients can view proposals for a project"
+            );
+        }
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() ->
